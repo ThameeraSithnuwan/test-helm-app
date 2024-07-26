@@ -7,7 +7,7 @@ name: ssr-web-app-prod_app_5c2ef47_env_38dda51 Pipeline (Skyu Generated)
       - .github/workflows/**
   workflow_dispatch: {}
   repository_dispatch:
-    types: pipeline_42f8e281-138a-4797-8839-7157018c943b
+    types: pipeline_fc760a1a-3fc3-414f-983e-37318f3730ff
 env:
   ENCODED_PIPELINE_SECRET: ${{secrets.TESTHELMAPP_SSRWEBAPPPROD_APP_5C2EF47_ENV_38DDA51}}
   COMMIT_ID: ${{github.event.client_payload.commitId || github.sha || github.run_id}}
