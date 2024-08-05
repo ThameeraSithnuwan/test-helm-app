@@ -1,0 +1,293 @@
+openapi: 3.1.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: API for managing user data and access in an organization.
+paths:
+  /health:
+    get:
+      summary: checks health
+      operationId: healthCheck     
+      parameters:
+        - name: x-trace-id
+          in: query
+          required: false
+          schema:
+            type: string           
+          description: unique trace Id
+      responses:
+        '200':
+          description: Response indicating if the app is Up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /users/checkUser:
+    get:
+      summary: Check if a user exists by email
+      operationId: checkUserExistence     
+      parameters:
+        - name: x-trace-id
+          in: query
+          required: false
+          schema:
+            type: string           
+          description: unique trace Id
+      responses:
+        '200':
+          description: Response indicating if the user exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      userExist:
+                        type: boolean
+  /users:
+    get:
+      summary: Find users info
+      operationId: findUser     
+      parameters:
+        - name: x-trace-id
+          in: query
+          required: false
+          schema:
+            type: string           
+          description: unique trace Id
+        - name: x-organization-id
+          in: query
+          required: true
+          schema:
+            type: string           
+          description: organization Id        
+      responses:
+        '200':
+          description: Successfully retrieved user data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      username:
+                        type: string
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      operationId: findOneUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDataDto'
+    delete:
+      summary: Delete user by ID
+      operationId: removeUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+  /users/invite:
+    post:
+      summary: Invite a user
+      operationId: inviteUser
+      requestBody:
+        description: User invitation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteUserDto'
+      responses:
+        '200':
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteUserResponseDto'
+  /roles:
+    get:
+      summary: Get all roles
+      operationId: findAllRoles
+      responses:
+        '200':
+          description: A list of roles
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      summary: Create a new role
+      operationId: createRole
+      requestBody:
+        description: Role to add
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Role created
+  /roles/{id}:
+    get:
+      summary: Get role by ID
+      operationId: findOneRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A role
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: Delete role by ID
+      operationId: removeRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Role deleted
+  /service-accounts:
+    get:
+      summary: Get all service accounts
+      operationId: findAllServiceAccounts
+      responses:
+        '200':
+          description: A list of service accounts
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      summary: Create a new service account
+      operationId: createServiceAccount
+      requestBody:
+        description: Service account to add
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Service account created
+  /service-accounts/{id}:
+    get:
+      summary: Get service account by ID
+      operationId: findOneServiceAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A service account
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: Delete service account by ID
+      operationId: removeServiceAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Service account deleted
+components:
+  schemas:
+    CreateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - username
+        - password
+    UserDataDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+    FilterUsersDto:
+      type: object
+      properties:
+        role:
+          type: string
+        isActive:
+          type: boolean
+    InviteUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        orgRoles:
+          type: array
+          items:
+            type: string
+          const:
+            - owner
+    InviteUserResponseDto:
+      type: object
+      properties:
+        message:
+          type: string
